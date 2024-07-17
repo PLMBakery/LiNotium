@@ -16,7 +16,6 @@ def create_note():
         li_notes_dir = os.path.join(os.path.dirname(__file__), "..", "LiNotes")
         images_dir = os.path.join(li_notes_dir, "images")
 
-        # Hauptordner und Bilderordner erstellen, falls nicht vorhanden
         if not os.path.exists(li_notes_dir):
             os.makedirs(li_notes_dir)
         if not os.path.exists(images_dir):
@@ -111,30 +110,59 @@ def create_note():
         folder_entry.delete(0, tk.END)
         folder_entry.insert(0, "LiNotes")
 
+    def exit_app():
+        root.quit()
+
     root = tk.Tk()
     root.title("Note Creator")
+
+    # Menü erstellen
+    menubar = tk.Menu(root)
+    file_menu = tk.Menu(menubar, tearoff=0)
+    file_menu.add_command(label="New Note", command=new_note)
+    file_menu.add_command(label="Save Note", command=save_note)
+    file_menu.add_command(label="Load Note", command=list_existing_folders)
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=exit_app)
+    menubar.add_cascade(label="File", menu=file_menu)
+
+    root.config(menu=menubar)
 
     # Style für die Buttons festlegen
     style = ttk.Style()
     style.configure("TButton", padding=3, relief="flat")
 
-    # Label and Entry for Folder Name
-    tk.Label(root, text="Folder Name:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-    folder_entry = tk.Entry(root, width=50)
-    folder_entry.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-    ttk.Button(root, text="Browse", command=browse_folder).grid(row=1, column=1, padx=5, pady=5)
+    # PanedWindow erstellen
+    paned_window = tk.PanedWindow(root, orient=tk.HORIZONTAL)
+    paned_window.pack(fill=tk.BOTH, expand=1)
 
-    # Treeview for Existing Folders and Notes
-    tk.Label(root, text="Existing Folders and Notes:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
-    tree = ttk.Treeview(root)
-    tree.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+    # Linker Frame für Ordnerauswahl und Notizen
+    left_frame = ttk.Frame(paned_window, width=200)
+    paned_window.add(left_frame)
+
+    # Rechter Frame für die Notizerstellung
+    right_frame = ttk.Frame(paned_window)
+    paned_window.add(right_frame)
+
+    # Ordnerauswahl und Notizen im linken Frame
+    tk.Label(left_frame, text="Folder Name:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    folder_entry = tk.Entry(left_frame, width=50)
+    folder_entry.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+    ttk.Button(left_frame, text="Browse", command=browse_folder).grid(row=1, column=1, padx=5, pady=5)
+
+    tk.Label(left_frame, text="Existing Folders and Notes:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    tree = ttk.Treeview(left_frame, height=20)
+    tree.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
     list_existing_folders()
     tree.bind("<Double-1>", on_note_select)
 
-    # Markdown formatting buttons
-    tk.Label(root, text="Markdown Tools:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
-    toolbar_frame = ttk.Frame(root)
-    toolbar_frame.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+    left_frame.grid_rowconfigure(3, weight=1)
+    left_frame.grid_columnconfigure(0, weight=1)
+
+    # Notizerstellung im rechten Frame
+    tk.Label(right_frame, text="Markdown Tools:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    toolbar_frame = ttk.Frame(right_frame)
+    toolbar_frame.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky="w")
 
     bold_button = ttk.Button(toolbar_frame, text="B", command=lambda: insert_markdown("**bold**"))
     bold_button.grid(row=0, column=0, padx=2)
@@ -164,26 +192,22 @@ def create_note():
     link_button.grid(row=0, column=6, padx=2)
     link_button.config(style="Link.TButton")
 
-    # Label and Entry for Note Title
-    tk.Label(root, text="Note Title:").grid(row=6, column=0, padx=5, pady=5, sticky="w")
-    title_entry = tk.Entry(root, width=50)
-    title_entry.grid(row=7, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(right_frame, text="Note Title:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    title_entry = tk.Entry(right_frame, width=50)
+    title_entry.grid(row=3, column=0, padx=5, pady=5, sticky="w")
 
-    # Label and Text for Note Content
-    tk.Label(root, text="Note Content:").grid(row=8, column=0, padx=5, pady=5, sticky="w")
-    content_text = tk.Text(root, width=60, height=20)
-    content_text.grid(row=9, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(right_frame, text="Note Content:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
+    content_text = tk.Text(right_frame, width=60, height=20)
+    content_text.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
 
-    # Buttons for Adding Image and Saving Note
-    ttk.Button(root, text="Add Image", command=add_image).grid(row=10, column=0, padx=5, pady=5, sticky="w")
+    ttk.Button(right_frame, text="Add Image", command=add_image).grid(row=6, column=0, padx=5, pady=5, sticky="w")
 
     convert_var = tk.BooleanVar()
-    ttk.Checkbutton(root, text="Convert to PDF", variable=convert_var).grid(row=11, column=0, padx=5, pady=5, sticky="w")
+    ttk.Checkbutton(right_frame, text="Convert to PDF", variable=convert_var).grid(row=7, column=0, padx=5, pady=5, sticky="w")
 
-    ttk.Button(root, text="Save Note", command=save_note).grid(row=12, column=0, padx=5, pady=20, sticky="e")
-    ttk.Button(root, text="New Note", command=new_note).grid(row=12, column=1, padx=5, pady=20, sticky="e")
+    ttk.Button(right_frame, text="Save Note", command=save_note).grid(row=8, column=0, padx=5, pady=20, sticky="e")
+    ttk.Button(right_frame, text="New Note", command=new_note).grid(row=8, column=1, padx=5, pady=20, sticky="e")
 
-    # Styles für Buttons
     style.configure("Bold.TButton", font=("Arial", 10, "bold"))
     style.configure("Italic.TButton", font=("Arial", 10, "italic"))
     style.configure("H1.TButton", font=("Arial", 10, "bold"))
@@ -192,6 +216,9 @@ def create_note():
     style.configure("List.TButton", font=("Arial", 10))
     style.configure("Link.TButton", font=("Arial", 10))
     style.configure("Image.TButton", font=("Arial", 10))
+
+    right_frame.grid_rowconfigure(5, weight=1)
+    right_frame.grid_columnconfigure(0, weight=1)
 
     root.mainloop()
 
