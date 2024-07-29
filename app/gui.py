@@ -1,8 +1,10 @@
 import os
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+from tkinter import PhotoImage  # Importieren der PhotoImage-Klasse für das Logo
 from note_manager import save_note_with_path, add_image, list_existing_folders, on_note_select, new_note_command, load_template, browse_folder
 from theme_manager import set_theme
+from menu_manager import create_menubar
 
 # Globale Variable für den aktuellen Dateipfad
 current_file_path = None
@@ -22,50 +24,40 @@ def create_note():
     global current_file_path
 
     root = tk.Tk()
-    root.title("Note Creator")
+    root.title("LiNotium")
 
-    # Menü erstellen
-    menubar = tk.Menu(root)
-    file_menu = tk.Menu(menubar, tearoff=0)
-    file_menu.add_command(label="New Note", command=lambda: new_note_command(title_entry, content_text))
-    file_menu.add_command(label="Save Note", command=lambda: save_note_with_path(current_file_path, title_entry, content_text, convert_var))
-    file_menu.add_command(label="Load Note", command=lambda: list_existing_folders(tree))
-    file_menu.add_command(label="Load Template", command=lambda: load_template(title_entry, content_text))
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)
-    menubar.add_cascade(label="File", menu=file_menu)
-
-    # Theme-Menü erstellen
-    theme_menu = tk.Menu(menubar, tearoff=0)
-    theme_menu.add_command(label="Light Mode", command=lambda: set_theme("light", root, left_frame, right_frame, folder_entry, title_entry, content_text, style, tree))
-    theme_menu.add_command(label="Dark Mode", command=lambda: set_theme("dark", root, left_frame, right_frame, folder_entry, title_entry, content_text, style, tree))
-    menubar.add_cascade(label="Theme", menu=theme_menu)
-
-    root.config(menu=menubar)
+    # Setze das Logo
+    logo_path = os.path.join(os.path.dirname(__file__), "logo.png")
+    if os.path.exists(logo_path):
+        logo = PhotoImage(file=logo_path)
+        root.iconphoto(False, logo)
 
     # Style für die Buttons festlegen
     style = ttk.Style()
     style.configure("TButton", padding=3, relief="flat")
 
-    # PanedWindow erstellen
+    # Define font for bold labels
+    bold_font = ("Arial", 12, "bold")
+
+    # Create PanedWindow
     paned_window = tk.PanedWindow(root, orient=tk.HORIZONTAL)
     paned_window.pack(fill=tk.BOTH, expand=1)
 
-    # Linker Frame für Ordnerauswahl und Notizen
+    # Left frame for folder selection and notes
     left_frame = ttk.Frame(paned_window, width=200)
     paned_window.add(left_frame)
 
-    # Rechter Frame für die Notizerstellung
+    # Right frame for note creation
     right_frame = ttk.Frame(paned_window)
     paned_window.add(right_frame)
 
-    # Ordnerauswahl und Notizen im linken Frame
-    tk.Label(left_frame, text="Folder Name:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    # Folder selection and notes in the left frame
+    tk.Label(left_frame, text="Folder Name:", font=bold_font).grid(row=0, column=0, padx=5, pady=5, sticky="w")
     folder_entry = tk.Entry(left_frame, width=50)
     folder_entry.grid(row=1, column=0, padx=5, pady=5, sticky="w")
     ttk.Button(left_frame, text="Browse", command=lambda: browse_folder(folder_entry, tree)).grid(row=1, column=1, padx=5, pady=5)
 
-    tk.Label(left_frame, text="Existing Folders and Notes:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(left_frame, text="Existing Folders and Notes:", font=bold_font).grid(row=2, column=0, padx=5, pady=5, sticky="w")
     tree = ttk.Treeview(left_frame, height=20)
     tree.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
     list_existing_folders(tree)
@@ -74,8 +66,8 @@ def create_note():
     left_frame.grid_rowconfigure(3, weight=1)
     left_frame.grid_columnconfigure(0, weight=1)
 
-    # Notizerstellung im rechten Frame
-    tk.Label(right_frame, text="Markdown Tools:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    # Note creation in the right frame
+    tk.Label(right_frame, text="Markdown Tools:", font=bold_font).grid(row=0, column=0, padx=5, pady=5, sticky="w")
     toolbar_frame = ttk.Frame(right_frame)
     toolbar_frame.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky="w")
 
@@ -107,11 +99,11 @@ def create_note():
     link_button.grid(row=0, column=6, padx=2)
     link_button.config(style="Link.TButton")
 
-    tk.Label(right_frame, text="Note Title:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(right_frame, text="Note Title:", font=bold_font).grid(row=2, column=0, padx=5, pady=5, sticky="w")
     title_entry = tk.Entry(right_frame, width=50)
     title_entry.grid(row=3, column=0, padx=5, pady=5, sticky="w")
 
-    tk.Label(right_frame, text="Note Content:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(right_frame, text="Note Content:", font=bold_font).grid(row=4, column=0, padx=5, pady=5, sticky="w")
     content_text = tk.Text(right_frame, width=60, height=20)
     content_text.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
 
@@ -134,6 +126,9 @@ def create_note():
 
     right_frame.grid_rowconfigure(5, weight=1)
     right_frame.grid_columnconfigure(0, weight=1)
+
+    # Create menubar
+    create_menubar(root, title_entry, content_text, tree, folder_entry, convert_var, style)
 
     root.mainloop()
 
