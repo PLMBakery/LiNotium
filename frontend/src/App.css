@@ -1,41 +1,53 @@
-.app-container {
+.App {
   display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  height: 100%;
 }
 
 .sidebar {
   width: 250px;
-  background-color: #2c3e50;
+  background-color: #333;
   color: white;
   padding: 20px;
-}
-
-.sidebar h3 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  overflow-y: auto;
 }
 
 .sidebar ul {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
 }
 
-.sidebar li {
-  margin: 10px 0;
+.sidebar ul li {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.sidebar ul li:hover {
+  background-color: #444;
   cursor: pointer;
 }
 
-.sidebar li:hover {
-  background-color: #34495e;
-  padding: 10px;
-}
-
-.note-display {
+.content {
   flex-grow: 1;
   padding: 20px;
+  overflow-y: auto;
 }
 
-.note-display h2 {
-  font-size: 28px;
+.note-item {
+  background-color: #f8f9fa;
+  padding: 10px;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
