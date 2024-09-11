@@ -1,53 +1,156 @@
+/* General App Styles */
 .App {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  min-height: 100vh;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #2c2f33;
   color: white;
   padding: 20px;
+  width: 100%;
   text-align: center;
 }
 
-.container {
+.App-content {
   display: flex;
-  height: 100%;
+  width: 100%;
+  height: calc(100vh - 100px);
 }
 
-.sidebar {
+/* Sidebar Styles */
+.Sidebar {
   width: 250px;
-  background-color: #333;
-  color: white;
+  background-color: #f5f5f5;
   padding: 20px;
-  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar ul {
-  list-style-type: none;
+.Sidebar h2 {
+  text-align: center;
+}
+
+.Sidebar ul {
+  list-style: none;
   padding: 0;
 }
 
-.sidebar ul li {
-  padding: 10px;
-  border-bottom: 1px solid #444;
-}
-
-.sidebar ul li:hover {
-  background-color: #444;
-  cursor: pointer;
-}
-
-.content {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.note-item {
-  background-color: #f8f9fa;
-  padding: 10px;
+.Sidebar ul li {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 15px;
   margin-bottom: 10px;
+  cursor: pointer;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.Sidebar ul li:hover {
+  background-color: #e0e0e0;
+}
+
+.Sidebar .add-note-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.Sidebar .add-note-button:hover {
+  background-color: #45a049;
+}
+
+/* Note Details Panel */
+.Note-details {
+  flex: 1;
+  padding: 20px;
+  background-color: white;
+  margin-left: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.Note-details h2 {
+  margin-top: 0;
+}
+
+.Note-details p {
+  font-size: 1.2rem;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content form div {
+  margin-bottom: 15px;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.modal-content button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+  background-color: #45a049;
+}
+
+.modal-content .close {
+  background-color: #f44336;
+  margin-top: 10px;
+}
+
+.modal-content .close:hover {
+  background-color: #e53935;
 }
