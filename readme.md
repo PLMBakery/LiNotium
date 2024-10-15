@@ -1,70 +1,90 @@
-# Re-attempt to save the markdown content and provide the download link again.
-
-md_content = """
-# Personal Note-Taking App with Raspberry Pi Hosting and Google Drive Sync
+# LiNotium: Personal Note-Taking App with Docker & PostgreSQL
 
 ## Overview
-This project focuses on creating a small, open-source, personal note-taking app. The app will be designed to run locally on a user’s devices (e.g., laptop, mobile) and can be hosted on a Raspberry Pi for 24/7 availability within the local network or with remote access if needed. Additionally, the app will integrate with Google Drive for cloud synchronization, allowing access to notes across multiple devices, even when the app is not locally available.
+LiNotium is a small, open-source, personal note-taking app designed to run locally via Docker. It features a simple note-taking interface, supports multi-user access, and can be hosted on any platform including Raspberry Pi. The app stores data in PostgreSQL, ensuring persistent storage and easy scalability for features like note attachments and family collaboration.
 
 ## Features
-- **Local Note-Taking**: A simple text editor that allows users to create, edit, and delete notes.
-- **Raspberry Pi Hosting**: The app can be hosted on a Raspberry Pi for local network access and optional remote access.
-- **Google Drive Sync**: Allows users to sync notes with Google Drive, making notes accessible across all devices.
-- **Open-Source**: The app is available on GitHub, allowing others to use, contribute, or fork the project.
-- **Offline-First Design**: The app will store notes locally and sync with Google Drive or the Raspberry Pi when connected to the network.
-- **Cross-Platform**: Usable on desktops, laptops, and mobile devices, with specific steps for Android.
-- **Low-Cost Infrastructure**: Using a Raspberry Pi and free Google Drive tiers ensures minimal ongoing costs.
+- **Note-Taking**: Simple interface for creating, editing, and deleting notes.
+- **To-Do Lists**: Keep track of tasks with a minimal to-do list feature.
+- **Family Calendar**: A shared calendar for family events.
+- **Screenshot Storage**: Save and organize screenshots along with notes.
+- **Multi-User**: Multiple family members can access and use the app simultaneously.
+- **Persistent Data**: Data is stored in PostgreSQL with Docker volumes to ensure persistence across restarts.
+- **Dockerized**: Runs entirely in Docker for cross-platform compatibility.
+- **Open-Source**: Available on GitHub for contributions and forks.
 
 ## Use Cases
+1. **Personal Note-Taking**: 
+   - Store and organize personal notes on a local machine.
+   - Access the app through a web browser.
+2. **Family Collaboration**: 
+   - Share notes, to-do lists, and a family calendar across devices.
+   - Multiple users can access the app simultaneously.
+3. **Hosting on Raspberry Pi**: 
+   - Deploy the app on a Raspberry Pi for 24/7 availability within a home network.
+4. **Potential Cloud Sync**: 
+   - The app can be extended to synchronize data across devices using a cloud-based solution like Google Drive or self-hosted storage.
 
-### 1. Personal Note-Taking
-- User installs the app on their device (PC, Mac, or mobile) using Docker or directly through a web browser.
-- Notes are stored locally in a simple folder structure.
-- Users can create, edit, and delete text-based notes.
+## Project Setup
 
-### 2. Self-Hosting on Raspberry Pi
-- The user deploys the app on a Raspberry Pi using Docker.
-- The app is accessible within the local network, allowing the user to access notes from any device (PC, mobile, tablet) on the same network.
-- Optionally, remote access can be set up to allow note access from outside the local network (via port forwarding or ngrok).
+### Prerequisites
+- **Docker** and **Docker Compose**
+- **Node.js** and **npm**
+- **PostgreSQL** (handled via Docker)
 
-### 3. Google Drive Synchronization
-- When enabled, the app syncs notes with Google Drive.
-- Any changes made locally are automatically saved to a Google Drive folder.
-- If the user accesses the app on another device (e.g., phone), the notes are retrieved from Google Drive and displayed in the app.
-- Offline mode is supported: notes are cached locally and synced when a network connection is available.
-
-### 4. Cross-Device Access
-- User takes notes on their laptop during the day.
-- The app is hosted on a Raspberry Pi, allowing them to access their notes from their mobile device at night.
-- The user can open their notes on their Android phone, either from the Raspberry Pi or directly from the Google Drive sync.
-
-## Step-by-Step Development Plan
-
-### Phase 1: Basic App Development
-1. **Create Note Editor**: Build a simple text editor interface (using React or Vue.js).
-   - Features: Text editing, save, delete notes.
-   - Store notes locally using a basic file-based database (e.g., Markdown files in a folder).
-
-2. **Dockerize the Application**: 
-   - Set up a Dockerfile and Docker Compose configuration.
-   - Ensure the app can run on any platform with Docker installed.
-
-3. **Local-Only Deployment**:
-   - The app is usable only on the local machine, without cloud sync or Raspberry Pi hosting.
-   - Test the basic functionality across different platforms (Windows, macOS, Linux).
-
-### Phase 2: Raspberry Pi Hosting
-1. **Prepare Raspberry Pi**:
-   - Install Raspberry Pi OS or a lightweight Linux distribution.
-   - Install Docker and Docker Compose on the Raspberry Pi.
-
-2. **Deploy the App on Raspberry Pi**:
-   - Move the Docker containers to the Pi, ensuring they run properly with mapped volumes for persistent storage.
-
-### New Steps from Current Chat
-
-#### Frontend (React) Setup
-1. Created the directory structure for the project using the `create_structure.py` script.
-2. Initialized the React frontend using the following command:
+### Backend Setup (Node.js + PostgreSQL)
+1. **Navigate to the Backend Directory**:
    ```bash
-   npx create-react-app frontend
+   cd /path/to/your/project/backend
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Ensure PostgreSQL is Running**:
+   - Make sure your PostgreSQL Docker container is running, or start it:
+     ```bash
+     cd ../db
+     docker-compose up --build
+     ```
+
+4. **Start the Backend**:
+   ```bash
+   node index.js
+   ```
+
+5. **Verify**:
+   - The backend should be running at `http://localhost:5000`.
+
+### Frontend Setup (React)
+1. **Navigate to the Frontend Directory**:
+   ```bash
+   cd /path/to/your/project/frontend
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the Frontend**:
+   ```bash
+   npm start
+   ```
+
+4. **Access the App**:
+   Open your browser and go to `http://localhost:3000`.
+
+### PostgreSQL Setup in Docker
+1. **Navigate to the Database Directory**:
+   ```bash
+   cd /path/to/your/project/db
+   ```
+
+2. **Start PostgreSQL with Docker**:
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will ensure that your PostgreSQL database (`linotium`) is up and running.
