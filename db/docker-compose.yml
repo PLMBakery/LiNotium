@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: marc
+      POSTGRES_PASSWORD: 560047
+      POSTGRES_DB: linotium
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

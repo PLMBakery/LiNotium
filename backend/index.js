@@ -14,12 +14,25 @@ app.use(bodyParser.json());
 
 // PostgreSQL connection pool
 const pool = new Pool({
-    user: process.env.POSTGRES_USER || 'marc',
-    host: process.env.POSTGRES_HOST || 'localhost', // change to 'db' if running in Docker Compose
-    database: process.env.POSTGRES_DB || 'linotion',
-    password: process.env.POSTGRES_PASSWORD || 'password',
+    user: 'marc',
+    host: 'localhost', // Keep as localhost if the database is running on your local machine
+    database: 'linotium',
+    password: '560047',
     port: 5432,
-});
+  });
+
+  // Check if the pool is running
+  pool.connect((err) => {
+    if (err) {
+      console.error('Error connecting to the database', err);
+    } else {
+      console.log('Connected to the database');
+      app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+      });
+    }
+  });
+  
 
 // Initialize the table if it doesn't exist
 const createTableQuery = `
