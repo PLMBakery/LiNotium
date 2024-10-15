@@ -1,16 +1,19 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "description": "Backend for Linotium Note-taking App",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Marc Weidner",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.0.0"
+    "express": "^5.0.0",
+    "pg": "^8.7.1",
+    "body-parser": "^1.19.0"
   }
 }

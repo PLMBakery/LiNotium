@@ -1,6 +1,32 @@
-version: '3'
+version: '3.8'
 
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=marc
+      - DB_PASSWORD=560047
+      - DB_NAME=linotium
+
   db:
     image: postgres:13
     environment:
