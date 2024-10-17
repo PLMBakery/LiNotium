@@ -30,24 +30,22 @@ services:
       db:
         condition: service_healthy
     environment:
+      DB_HOST: db
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
-      DB_HOST: db
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/usr/src/app
     networks:
       - linotium_network
-    command: ["./wait-for-it.sh", "db:5432", "--timeout=60", "--strict", "--", "node", "index.js"]
+    command: ["node", "index.js"]
 
   frontend:
     build: ./frontend
     depends_on:
       - backend
-    environment:
-      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
     ports:
       - "3000:3000"
     volumes:
