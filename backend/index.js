@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 // PostgreSQL connection pool
 const pool = new Pool({
     user: 'marc',
-    host: 'localhost', // Keep as localhost if the database is running on your local machine
+    host: 'db', // changed from localhost to db because of using docker now // 17102024
     database: 'linotium',
     password: '560047',
     port: 5432,
