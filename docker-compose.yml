@@ -21,7 +21,8 @@ services:
   backend:
     build: ./backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_USER: ${DB_USER}
@@ -33,6 +34,12 @@ services:
       - ./backend:/usr/src/app
     networks:
       - linotium_network
+    command: ["./wait-for-it.sh", "db:5432", "--timeout=60", "--", "node", "index.js"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -h db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build: ./frontend
@@ -44,9 +51,7 @@ services:
       - ./frontend:/usr/src/app
     networks:
       - linotium_network
+    command: ["sh", "-c", "export NODE_OPTIONS=--openssl-legacy-provider && npm start"]
 
 volumes:
   postgres_data:
-
-networks:
-  linotium_network:
