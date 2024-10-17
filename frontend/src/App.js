@@ -3,54 +3,60 @@ import './App.css';
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [selectedNote, setSelectedNote] = useState(null); // Track the selected note
+  const [selectedNote, setSelectedNote] = useState(null);
   const [newNote, setNewNote] = useState({ title: '', content: '' });
-  const [showNewNoteModal, setShowNewNoteModal] = useState(false); // Control modal visibility
+  const [showNewNoteModal, setShowNewNoteModal] = useState(false);
 
-  // Fetch the notes from the backend when the component mounts
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   useEffect(() => {
-    fetch('http://localhost:5000/api/notes')
+    if (!backendUrl) {
+      console.error('Backend URL is not defined. Please set REACT_APP_BACKEND_URL in the environment variables.');
+      return;
+    }
+    fetch(`${backendUrl}/api/notes`)
       .then(response => response.json())
       .then(data => setNotes(data))
       .catch(error => console.error('Error fetching notes:', error));
-  }, []);
+  }, [backendUrl]);
 
-  // Handle note selection
   const handleNoteSelect = (note) => {
     setSelectedNote(note);
   };
 
-  // Handle input change for the new note
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewNote({ ...newNote, [name]: value });
   };
 
-  // Handle form submission to create a new note
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:5000/api/notes', {
+    if (!backendUrl) {
+      console.error('Backend URL is not defined. Please set REACT_APP_BACKEND_URL in the environment variables.');
+      return;
+    }
+
+    fetch(`${backendUrl}/api/notes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newNote),
     })
       .then(response => response.json())
       .then(data => {
-        setNotes([...notes, data]); // Add the new note to the existing list
-        setNewNote({ title: '', content: '' }); // Reset the form
-        setShowNewNoteModal(false); // Close the modal after submitting
+        setNotes([...notes, data]);
+        setNewNote({ title: '', content: '' });
+        setShowNewNoteModal(false);
       })
       .catch(error => console.error('Error adding note:', error));
   };
 
-  // Handle opening and closing the modal
   const handleNewNoteClick = () => {
-    setShowNewNoteModal(true); // Open modal
+    setShowNewNoteModal(true);
   };
 
   const handleModalClose = () => {
-    setShowNewNoteModal(false); // Close modal
+    setShowNewNoteModal(false);
   };
 
   return (
@@ -86,7 +92,6 @@ function App() {
           )}
         </div>
 
-        {/* Modal for creating new note */}
         {showNewNoteModal && (
           <div className="modal">
             <div className="modal-content">

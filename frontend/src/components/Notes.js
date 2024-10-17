@@ -5,7 +5,8 @@ const Notes = () => {
     const [selectedNote, setSelectedNote] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/notes')
+        const backendUrl = process.env.REACT_APP_BACKEND_URL;
+        fetch(`${backendUrl}/api/notes`)
             .then((response) => response.json())
             .then((data) => setNotes(data))
             .catch((error) => console.error('Error fetching notes:', error));
