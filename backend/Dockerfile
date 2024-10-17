@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install the backend dependencies
 RUN npm install
 
+# Copy the wait-for-it script
+COPY wait-for-it.sh /usr/src/app/
+
 # Copy the rest of the backend source code
 COPY . .
 
@@ -18,3 +21,6 @@ EXPOSE 5000
 
 # Start the backend server
 CMD ["node", "index.js"]
+
+# Start the backend server and wait for the database to be ready
+CMD ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
