@@ -15,34 +15,36 @@ app.use(bodyParser.json());
 // PostgreSQL connection pool
 const pool = new Pool({
     user: 'marc',
-    host: 'db', // changed from localhost to db because of using docker now // 17102024
+    host: 'db', // Using Docker service name "db"
     database: 'linotium',
-    password: '560047',
+    password: 'marc',
     port: 5432,
-  });
+});
 
-  // Check if the pool is running
-  pool.connect((err) => {
+// Check if the pool is running
+pool.connect((err) => {
     if (err) {
-      console.error('Error connecting to the database', err);
+        console.error('Error connecting to the database', err);
     } else {
-      console.log('Connected to the database');
-      app.listen(port, () => {
-        console.log(`Server running on http://localhost:${port}`);
-      });
-    }
-  });
-  
+        console.log('Connected to the database');
+        
+        // Initialize the table if it doesn't exist
+        const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS notes (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            content TEXT NOT NULL
+        );
+        `;
+        pool.query(createTableQuery).catch((err) => console.error('Error creating table', err));
 
-// Initialize the table if it doesn't exist
-const createTableQuery = `
-CREATE TABLE IF NOT EXISTS notes (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL
-);
-`;
-pool.query(createTableQuery).catch((err) => console.error('Error creating table', err));
+        // Start the server after the database is connected and the table is initialized
+        app.listen(port, () => {
+            console.log(`Server running on http://backend:${port}`);
+            console.log('App is ready. You can access the frontend at http://localhost:3000/');
+        });
+    }
+});
 
 // Get all notes (READ)
 app.get('/api/notes', async (req, res) => {
@@ -107,9 +109,4 @@ app.put('/api/notes/:id', async (req, res) => {
         console.error('Error updating note', error);
         res.status(500).json({ message: 'Error updating note' });
     }
-});
-
-// Start the server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
 });

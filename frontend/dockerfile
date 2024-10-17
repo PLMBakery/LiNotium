@@ -13,6 +13,9 @@ RUN npm install
 # Copy the rest of the frontend source code
 COPY . .
 
+# Ensure all necessary files have the correct permissions
+RUN chmod -R 755 /usr/src/app
+
 # Expose the frontend port
 EXPOSE 3000
 

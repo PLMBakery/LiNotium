@@ -16,11 +16,11 @@ COPY wait-for-it.sh /usr/src/app/
 # Copy the rest of the backend source code
 COPY . .
 
+# Make wait-for-it.sh executable
+RUN chmod +x wait-for-it.sh
+
 # Expose the backend port
 EXPOSE 5000
-
-# Start the backend server
-CMD ["node", "index.js"]
 
 # Start the backend server and wait for the database to be ready
 CMD ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
