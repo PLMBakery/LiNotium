@@ -9,7 +9,7 @@ function App() {
 
   // Fetch the notes from the backend when the component mounts
   useEffect(() => {
-    fetch('http://localhost:5000/api/notes')
+    fetch('http://backend:5000/api/notes')
       .then(response => response.json())
       .then(data => setNotes(data))
       .catch(error => console.error('Error fetching notes:', error));
@@ -30,7 +30,7 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:5000/api/notes', {
+    fetch('http://backend:5000/api/notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newNote),
