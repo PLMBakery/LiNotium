@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 
 const app = express();
@@ -10,12 +9,12 @@ const port = 5000;
 app.use(cors());
 
 // Middleware to handle JSON requests
-app.use(bodyParser.json());
+app.use(express.json());
 
 // PostgreSQL connection pool
 const pool = new Pool({
     user: 'marc',
-    host: 'db', // Using Docker service name "db"
+    host: 'db', // changed from localhost to db because of using docker now // 17102024
     database: 'linotium',
     password: 'marc',
     port: 5432,
@@ -27,24 +26,22 @@ pool.connect((err) => {
         console.error('Error connecting to the database', err);
     } else {
         console.log('Connected to the database');
-        
-        // Initialize the table if it doesn't exist
-        const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS notes (
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            content TEXT NOT NULL
-        );
-        `;
-        pool.query(createTableQuery).catch((err) => console.error('Error creating table', err));
-
-        // Start the server after the database is connected and the table is initialized
         app.listen(port, () => {
             console.log(`Server running on http://backend:${port}`);
             console.log('App is ready. You can access the frontend at http://localhost:3000/');
         });
     }
 });
+
+// Initialize the table if it doesn't exist
+const createTableQuery = `
+CREATE TABLE IF NOT EXISTS notes (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL
+);
+`;
+pool.query(createTableQuery).catch((err) => console.error('Error creating table', err));
 
 // Get all notes (READ)
 app.get('/api/notes', async (req, res) => {
