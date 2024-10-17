@@ -7,14 +7,20 @@ WORKDIR /usr/src/app
 # Copy the package.json and package-lock.json
 COPY package*.json ./
 
+# Copy the .env file
+COPY .env ./
+
 # Install the frontend dependencies
 RUN npm install
 
 # Copy the rest of the frontend source code
 COPY . .
 
+# Ensure all necessary files have the correct permissions
+RUN chmod -R 755 /usr/src/app
+
 # Expose the frontend port
 EXPOSE 3000
 
 # Start the frontend server using OpenSSL legacy provider
-CMD ["npm", "start"]
+CMD ["sh", "-c", "export NODE_OPTIONS=--openssl-legacy-provider && npm start"]
