@@ -39,10 +39,12 @@ const createTableQuery = `
 CREATE TABLE IF NOT EXISTS notes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL
+    content TEXT NOT NULL,
+    deleted_at TIMESTAMP
 );
 `;
 pool.query(createTableQuery).catch((err) => console.error('Error creating table', err));
+
 
 // Get all notes (READ)
 app.get('/api/notes', async (req, res) => {
@@ -76,12 +78,13 @@ app.post('/api/notes', async (req, res) => {
     }
 });
 
-// Delete a note (DELETE)
+// Soft Delete a note (move to trash)
 app.delete('/api/notes/:id', async (req, res) => {
     const { id } = req.params;
+    const deletedAt = new Date();
 
     try {
-        await pool.query('DELETE FROM notes WHERE id = $1', [id]);
+        await pool.query('UPDATE notes SET deleted_at = $1 WHERE id = $2', [deletedAt, id]);
         res.status(204).send();
     } catch (error) {
         console.error('Error deleting note', error);
@@ -106,5 +109,49 @@ app.put('/api/notes/:id', async (req, res) => {
     } catch (error) {
         console.error('Error updating note', error);
         res.status(500).json({ message: 'Error updating note' });
+    }
+});
+
+// Get all deleted notes (Trash)
+app.get('/api/notes/trash', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM notes WHERE deleted_at IS NOT NULL');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching deleted notes', error);
+        res.status(500).json({ message: 'Error fetching deleted notes' });
+    }
+});
+
+const cron = require('node-cron');
+
+// Schedule a job to delete notes older than 30 days
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        await pool.query('DELETE FROM notes WHERE deleted_at IS NOT NULL AND deleted_at < $1', [thirtyDaysAgo]);
+        console.log('Deleted notes older than 30 days from trash');
+    } catch (error) {
+        console.error('Error deleting old notes from trash', error);
+    }
+});
+
+// Restore a deleted note (UNDO DELETE)
+app.put('/api/notes/restore/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await pool.query(
+            'UPDATE notes SET deleted_at = NULL WHERE id = $1 RETURNING *',
+            [id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error restoring note', error);
+        res.status(500).json({ message: 'Error restoring note' });
     }
 });
