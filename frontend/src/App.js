@@ -7,35 +7,30 @@ function App() {
   const [newNote, setNewNote] = useState({ title: '', content: '' });
   const [showNewNoteModal, setShowNewNoteModal] = useState(false);
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
+  // Fetch notes from backend when component mounts
   useEffect(() => {
-    if (!backendUrl) {
-      console.error('Backend URL is not defined. Please set REACT_APP_BACKEND_URL in the environment variables.');
-      return;
-    }
     fetch(`${backendUrl}/api/notes`)
       .then(response => response.json())
       .then(data => setNotes(data))
       .catch(error => console.error('Error fetching notes:', error));
   }, [backendUrl]);
 
+  // Handle note selection
   const handleNoteSelect = (note) => {
     setSelectedNote(note);
   };
 
+  // Handle input change for the new note
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewNote({ ...newNote, [name]: value });
   };
 
+  // Handle form submission to create a new note
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!backendUrl) {
-      console.error('Backend URL is not defined. Please set REACT_APP_BACKEND_URL in the environment variables.');
-      return;
-    }
 
     fetch(`${backendUrl}/api/notes`, {
       method: 'POST',
@@ -51,6 +46,21 @@ function App() {
       .catch(error => console.error('Error adding note:', error));
   };
 
+  // Handle deleting a note
+  const handleDeleteNote = (id) => {
+    fetch(`${backendUrl}/api/notes/${id}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        setNotes(notes.filter(note => note.id !== id));
+        if (selectedNote && selectedNote.id === id) {
+          setSelectedNote(null);
+        }
+      })
+      .catch(error => console.error('Error deleting note:', error));
+  };
+
+  // Handle opening and closing the modal
   const handleNewNoteClick = () => {
     setShowNewNoteModal(true);
   };
@@ -73,9 +83,12 @@ function App() {
           <h2>Notes</h2>
           <ul>
             {notes.map(note => (
-              <li key={note.id} onClick={() => handleNoteSelect(note)}>
-                <strong>{note.title}</strong>
-                <p>{note.content}</p>
+              <li key={note.id}>
+                <div onClick={() => handleNoteSelect(note)}>
+                  <strong>{note.title}</strong>
+                  <p>{note.content}</p>
+                </div>
+                <button onClick={() => handleDeleteNote(note.id)}>Delete</button>
               </li>
             ))}
           </ul>
