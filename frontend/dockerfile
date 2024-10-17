@@ -16,5 +16,5 @@ COPY . .
 # Expose the frontend port
 EXPOSE 3000
 
-# Start the frontend app
-CMD ["npm", "start"]
+# Start the frontend server using OpenSSL legacy provider
+CMD ["sh", "-c", "export NODE_OPTIONS=--openssl-legacy-provider && npm start"]
