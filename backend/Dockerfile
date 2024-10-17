@@ -1,6 +1,9 @@
 # Use an official Node.js image as the base image
 FROM node:18
 
+# Install postgresql-client to use pg_isready
+RUN apt-get update && apt-get install -y postgresql-client
+
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
