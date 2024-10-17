@@ -26,4 +26,4 @@ RUN chmod +x wait-for-it.sh
 EXPOSE 5000
 
 # Start the backend server and wait for the database to be ready
-CMD ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
+CMD ["sh", "-c", "./wait-for-it.sh db:5432 --timeout=60 --strict -- node index.js"]

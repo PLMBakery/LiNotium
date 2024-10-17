@@ -6,7 +6,7 @@ host="$1"
 shift
 cmd="$@"
 
-until pg_isready -h "$host"; do
+until pg_isready -h "$host" -p 5432 -U ${DB_USER}; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
