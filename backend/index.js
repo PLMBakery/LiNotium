@@ -26,8 +26,9 @@ pool.connect((err) => {
         console.error('Error connecting to the database', err);
     } else {
         console.log('Connected to the database');
-        app.listen(port, () => {
-            console.log(`Server running on http://backend:${port}`);
+        // Update this line to listen on all interfaces
+        app.listen(port, '0.0.0.0', () => {
+            console.log(`Server running on http://0.0.0.0:${port}`);
             console.log('App is ready. You can access the frontend at http://localhost:3000/');
         });
     }
