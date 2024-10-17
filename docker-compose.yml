@@ -1,16 +1,22 @@
 version: '3'
 
+networks:
+  linotium_network:
+    driver: bridge
+
 services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_USER: marc
-      POSTGRES_PASSWORD: 560047
-      POSTGRES_DB: linotium
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - linotium_network
 
   backend:
     build: ./backend
@@ -18,22 +24,29 @@ services:
       - db
     environment:
       DB_HOST: db
-      DB_USER: marc
-      DB_PASSWORD: 560047
-      DB_NAME: linotium
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/usr/src/app
+    networks:
+      - linotium_network
 
   frontend:
     build: ./frontend
-    ports:
-      - "3000:3000"
     depends_on:
       - backend
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend:/usr/src/app
+    networks:
+      - linotium_network
 
 volumes:
   postgres_data:
+
+networks:
+  linotium_network:
